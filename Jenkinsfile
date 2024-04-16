@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    DOCKER_IMAGE = 'rani2909/jenkins' // Modify this according to your Docker repository
+    DOCKER_IMAGE = 'rani2909/myjenkin' // Modify this according to your Docker repository
   }
 
   stages {
