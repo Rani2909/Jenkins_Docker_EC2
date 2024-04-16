@@ -1,15 +1,7 @@
-FROM python:3.9-alpine
+FROM nginx:alpine
 
-WORKDIR /flask_app
+COPY index.html /usr/share/nginx/html/
 
-COPY requirements.txt .
+EXPOSE 80
 
-RUN pip install --no-cache-dir -r requirements.txt
-
-RUN pip install pytest
-
-COPY app/ .
-
-COPY tests/ app/tests/
-
-CMD [ "python", "app.py" ]
+CMD ["nginx", "-g", "daemon off;"]
