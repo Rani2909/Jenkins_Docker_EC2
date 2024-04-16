@@ -1,29 +1,33 @@
 pipeline {
   agent any
 
+  environment {
+    DOCKER_IMAGE = 'rani2909/jenkins' // Modify this according to your Docker repository
+  }
+
   stages {
     stage('Build') {
       steps {
-        sh 'docker build -t my-flask-app .'
-        sh 'docker tag my-flask-app $DOCKER_IMAGE'
-      }
-    }
-    stage('Test') {
-      steps {
-        sh 'docker run my-flask-app python -m pytest app/tests/'
+        // Build Docker image and tag it
+        sh 'docker build -t healthcare-app .'
+        sh 'docker tag healthcare-app $DOCKER_IMAGE'
       }
     }
     stage('Deploy') {
       steps {
+        // Login to Docker registry
         withCredentials([usernamePassword(credentialsId: "${DOCKER_REGISTRY}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
           sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin docker.io"
+          // Push Docker image to registry
           sh 'docker push $DOCKER_IMAGE'
         }
       }
     }
   }
+
   post {
     always {
+      // Logout from Docker registry
       sh 'docker logout'
     }
   }
