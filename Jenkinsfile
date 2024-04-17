@@ -21,7 +21,7 @@ pipeline {
                 sh 'docker login -u rani2909 -p Pearl@886'
                 
                 // Build Docker image and tag it
-                sh 'docker build . --file Dockerfile --tag $DOCKER_IMAGE'
+                sh "docker build . --file Dockerfile --tag $DOCKER_IMAGE"
             }
         }
         
