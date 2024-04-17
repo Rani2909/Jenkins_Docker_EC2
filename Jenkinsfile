@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         DOCKER_IMAGE = 'rani2909/mywebsite:latest'
-        EC2_INSTANCE = 'ec2-44-201-170-191.compute-1.amazonaws.com'
+        EC2_INSTANCE = 'ec2-44-206-241-86.compute-1.amazonaws.com'
         EC2_USER = 'ubuntu'
     }
     
