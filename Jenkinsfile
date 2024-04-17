@@ -28,13 +28,12 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
-                        sshCommand remote: "ubuntu@${EC2_INSTANCE}", command: """
-                            docker stop myjenkin || true
-                            docker rm myjenkin || true
-                            docker pull $DOCKER_IMAGE
-                            docker run -d -p 8082:80 --name myjenkin $DOCKER_IMAGE
-                        """
+                     sshCommand remote: "ubuntu@${EC2_INSTANCE}", command: """
+                        docker stop myjenkin || true
+                        docker rm myjenkin || true
+                        docker pull $DOCKER_IMAGE
+                        docker run -d -p 8082:80 --name myjenkin $DOCKER_IMAGE
+                    """
                     }
                 }
             }
