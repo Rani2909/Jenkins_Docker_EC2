@@ -19,7 +19,7 @@ pipeline {
             steps {
                 // Deploy Docker image to EC2 instance
                 script {
-                    sshagent(credentials: ['your-ssh-credential-id']) {
+                    sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
                         // SSH into EC2 instance and pull the Docker image
                         ssh "ubuntu@${env.EC2_INSTANCE} \"docker pull ${env.DOCKER_IMAGE}\""
                     }
