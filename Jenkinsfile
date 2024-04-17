@@ -3,6 +3,8 @@ pipeline {
 
   environment {
     DOCKER_IMAGE = 'rani2909/myjenkin' // Modify this according to your Docker repository
+    EC2_INSTANCE = 'ec2-3-87-72-11.compute-1.amazonaws.com'
+    EC2_USER = 'ec2-user' // or the user you use to SSH into your EC2 instance
   }
 
   stages {
@@ -15,11 +17,12 @@ pipeline {
     }
     stage('Deploy') {
       steps {
-        // Login to Docker registry
-        withCredentials([usernamePassword(credentialsId: "${DOCKER_REGISTRY}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-          sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USERNAME --password-stdin docker.io"
-          // Push Docker image to registry
-          sh 'docker push $DOCKER_IMAGE'
+        // Deploy Docker image to EC2 instance
+        script {
+          sshagent(['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
+            // SSH into EC2 instance and pull the Docker image
+            sh "ssh ${EC2_USER}@${EC2_INSTANCE} docker pull $DOCKER_IMAGE"
+          }
         }
       }
     }
