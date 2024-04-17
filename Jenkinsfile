@@ -10,33 +10,24 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                // Build Docker image and tag it
-                sh 'docker build -t healthcare-app .'
-                sh 'docker tag healthcare-app $DOCKER_IMAGE'
+                // Checkout source code from GitHub repository
+                git 'https://github.com/Rani2909/Jenkins_Docker_EC2.git'
+                
+                // Build Docker image
+                script {
+                    docker.build("healthcare-app")
+                }
             }
         }
         stage('Deploy') {
             steps {
-                // Cleanup existing containers
+                // SSH into EC2 instance and deploy Docker image
                 script {
-                    sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
-                        try {
-                            ssh "ubuntu@${EC2_INSTANCE} \"docker stop \$(docker ps -q --filter ancestor=${DOCKER_IMAGE}) || true\""
-                            ssh "ubuntu@${EC2_INSTANCE} \"docker rm \$(docker ps -aq --filter ancestor=${DOCKER_IMAGE}) || true\""
-                        } catch (Exception e) {
-                            echo "Error cleaning up containers: ${e}"
-                        }
-                    }
-                }
-                // Deploy Docker image to EC2 instance
-                script {
-                    sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
-                        try {
-                            ssh "ubuntu@${EC2_INSTANCE} \"docker pull ${DOCKER_IMAGE}\""
-                            ssh "ubuntu@${EC2_INSTANCE} \"docker run -d -p 8081:80 ${DOCKER_IMAGE}\""
-                        } catch (Exception e) {
-                            echo "Error deploying Docker image: ${e}"
-                        }
+                    sshagent(credentials: ['YOUR_SSH_CREDENTIALS_ID']) {
+                        ssh "ubuntu@${EC2_INSTANCE} 'docker pull ${DOCKER_IMAGE}'"
+                        ssh "ubuntu@${EC2_INSTANCE} 'docker stop healthcare-app || true'"
+                        ssh "ubuntu@${EC2_INSTANCE} 'docker rm healthcare-app || true'"
+                        ssh "ubuntu@${EC2_INSTANCE} 'docker run -d -p 8081:80 --name healthcare-app ${DOCKER_IMAGE}'"
                     }
                 }
             }
