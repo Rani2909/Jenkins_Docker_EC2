@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'rani2909/myjenkin' // Modify this according to your Docker repository
-        EC2_INSTANCE = 'ec2-3-87-72-11.compute-1.amazonaws.com'
+        EC2_INSTANCE = 'ec2-44-201-170-191.compute-1.amazonaws.com'
         EC2_USER = 'ubuntu' // or the user you use to SSH into your EC2 instance
     }
 
