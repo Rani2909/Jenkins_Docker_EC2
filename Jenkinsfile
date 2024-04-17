@@ -21,7 +21,7 @@ pipeline {
         script {
           sshagent(['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
             // SSH into EC2 instance and pull the Docker image
-            sh "ssh ${EC2_USER}@${EC2_INSTANCE} docker pull $DOCKER_IMAGE"
+            sh "ssh -o StrictHostKeyChecking=no ec2-user@ec2-3-87-72-11.compute-1.amazonaws.com docker pull rani2909/myjenkin"
           }
         }
       }
