@@ -21,7 +21,7 @@ pipeline {
                 script {
                     sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
                         // SSH into EC2 instance and pull the Docker image
-                        ssh "ubuntu@${EC2_INSTANCE} \"docker pull ${DOCKER_IMAGE}\" && docker run -d -p 8080:8080 ${DOCKER_IMAGE}"
+                        ssh "ubuntu@${EC2_INSTANCE} \"docker pull ${DOCKER_IMAGE}\" && docker run -d -p 80:80 ${DOCKER_IMAGE}"
                     }
                 }
             }
