@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'rani2909/mywebsite' // Modify this according to your Docker repository
+        DOCKER_IMAGE = 'rani2909/mywebsite:latest' // Modify this according to your Docker repository
         EC2_INSTANCE = 'ec2-44-201-170-191.compute-1.amazonaws.com'
         EC2_USER = 'ubuntu' // or the user you use to SSH into your EC2 instance
     }
@@ -17,8 +17,11 @@ pipeline {
         
         stage('Build') {
             steps {
+                // Login to Docker registry
+                sh 'docker login -u <username> -p <password>'
+                
                 // Build Docker image and tag it
-                sh 'docker build . --file Dockerfile --tag rani2909/mywebsite:latest'
+                sh 'docker build . --file Dockerfile --tag $DOCKER_IMAGE'
             }
         }
         
@@ -35,10 +38,10 @@ pipeline {
                 script {
                     sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
                         // SSH into EC2 instance and pull the Docker image
-                        ssh "${EC2_USER}@${EC2_INSTANCE} \"docker pull rani2909/mywebsite\""
+                        ssh "${EC2_USER}@${EC2_INSTANCE} \"docker pull $DOCKER_IMAGE\""
                         
                         // Run a new container
-                        ssh "${EC2_USER}@${EC2_INSTANCE} \"docker run -d -p 80:80 --name mywebsite rani2909/mywebsite:latest\""
+                        ssh "${EC2_USER}@${EC2_INSTANCE} \"docker run -d -p 80:80 --name mywebsite $DOCKER_IMAGE\""
                     }
                 }
             }
