@@ -41,7 +41,7 @@ pipeline {
                         ssh "${EC2_USER}@${EC2_INSTANCE} \"docker pull $DOCKER_IMAGE\""
                         
                         // Run a new container
-                        ssh "${EC2_USER}@${EC2_INSTANCE} \"docker run -d -p 80:80 --name mywebsite $DOCKER_IMAGE\""
+                        ssh "${EC2_USER}@${EC2_INSTANCE} \"docker run -d -p 8081:80 --name mywebsite $DOCKER_IMAGE\""
                     }
                 }
             }
