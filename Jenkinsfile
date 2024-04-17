@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'rani2909/myjenkin:latest' // Specify the Docker image tag here
+        DOCKER_IMAGE = 'rani2909/mywebsite' // Modify this according to your Docker repository
         EC2_INSTANCE = 'ec2-44-201-170-191.compute-1.amazonaws.com'
-        EC2_USER = 'ubuntu'
-        SSH_CREDENTIALS = '7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2' // Updated to your SSH credentials ID
+        EC2_USER = 'ubuntu' // or the user you use to SSH into your EC2 instance
     }
 
     stages {
@@ -19,9 +18,7 @@ pipeline {
         stage('Build') {
             steps {
                 // Build Docker image and tag it
-                script {
-                    docker.build('rani2909/myjenkin', '.')
-                }
+                sh 'docker build . --file Dockerfile --tag rani2909/mywebsite:latest'
             }
         }
         
@@ -29,18 +26,19 @@ pipeline {
             steps {
                 // Cleanup existing containers
                 script {
-                    sshagent(credentials: [SSH_CREDENTIALS]) {
-                        ssh "ubuntu@${EC2_INSTANCE} \"docker stop \$(docker ps -q --filter name=myjenkin) || true\""
-                        ssh "ubuntu@${EC2_INSTANCE} \"docker rm \$(docker ps -aq --filter name=myjenkin) || true\""
+                    sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
+                        ssh "${EC2_USER}@${EC2_INSTANCE} \"docker stop mywebsite && docker rm mywebsite || true\""
                     }
                 }
                 
                 // Deploy Docker image to EC2 instance
                 script {
-                    sshagent(credentials: [SSH_CREDENTIALS]) {
+                    sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
                         // SSH into EC2 instance and pull the Docker image
-                        ssh "ubuntu@${EC2_INSTANCE} \"docker pull ${DOCKER_IMAGE}\""
-                        ssh "ubuntu@${EC2_INSTANCE} \"docker run -d -p 8081:80 --name myjenkin ${DOCKER_IMAGE}\""
+                        ssh "${EC2_USER}@${EC2_INSTANCE} \"docker pull rani2909/mywebsite\""
+                        
+                        // Run a new container
+                        ssh "${EC2_USER}@${EC2_INSTANCE} \"docker run -d -p 80:80 --name mywebsite rani2909/mywebsite:latest\""
                     }
                 }
             }
