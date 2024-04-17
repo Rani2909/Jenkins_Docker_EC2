@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'rani2909/mywebsite:latest'
+        DOCKER_IMAGE = 'rani2909/myjenkin:latest'
         EC2_INSTANCE = 'ec2-44-206-241-86.compute-1.amazonaws.com'
         EC2_USER = 'ubuntu'
     }
@@ -30,9 +30,9 @@ pipeline {
                 script {
                     sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
                         sshCommand remote: "ubuntu@${EC2_INSTANCE}", command: """
-                            docker stop mywebsite && docker rm mywebsite || true
+                            docker stop myjenkin && docker rm myjenkin || true
                             docker pull $DOCKER_IMAGE
-                            docker run -d -p 8082:80 --name mywebsite $DOCKER_IMAGE
+                            docker run -d -p 8082:80 --name myjenkin $DOCKER_IMAGE
                         """
                     }
                 }
