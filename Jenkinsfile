@@ -5,7 +5,6 @@ pipeline {
         DOCKER_IMAGE = 'rani2909/mywebsite:latest'
         EC2_INSTANCE = 'ec2-44-206-241-86.compute-1.amazonaws.com'
         EC2_USER = 'ubuntu'
-        SSH_KEY_FILE = '/var/lib/jenkins/workspace/Healthcare CICD pipeline/ubuntukey.pem'
     }
 
     stages {
@@ -19,7 +18,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-                        docker.image("rani2909/mywebsite:latest").build("-t $DOCKER_IMAGE -f Dockerfile .")
+                        def customImage = docker.build(DOCKER_IMAGE, "-f Dockerfile .")
+                        customImage.push()
                     }
                 }
             }
@@ -43,7 +43,7 @@ pipeline {
     post {
         always {
             script {
-                docker.image('rani2909/mywebsite:latest').push('latest')
+                docker.image(DOCKER_IMAGE).push('latest')
             }
             script {
                 sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
