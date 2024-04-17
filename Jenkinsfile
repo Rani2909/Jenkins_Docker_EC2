@@ -23,7 +23,7 @@ pipeline {
             steps {
                 // SSH into EC2 instance and deploy Docker image
                 script {
-                    sshagent(credentials: ['YOUR_SSH_CREDENTIALS_ID']) {
+                    sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
                         ssh "ubuntu@${EC2_INSTANCE} 'docker pull ${DOCKER_IMAGE}'"
                         ssh "ubuntu@${EC2_INSTANCE} 'docker stop healthcare-app || true'"
                         ssh "ubuntu@${EC2_INSTANCE} 'docker rm healthcare-app || true'"
