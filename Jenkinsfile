@@ -34,7 +34,6 @@ pipeline {
                         docker pull $DOCKER_IMAGE
                         docker run -d -p 8082:80 --name myjenkin $DOCKER_IMAGE
                     """
-                    }
                 }
             }
         }
