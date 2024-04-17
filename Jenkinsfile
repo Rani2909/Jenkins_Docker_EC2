@@ -4,7 +4,7 @@ pipeline {
   environment {
     DOCKER_IMAGE = 'rani2909/myjenkin' // Modify this according to your Docker repository
     EC2_INSTANCE = 'ec2-3-87-72-11.compute-1.amazonaws.com'
-    EC2_USER = 'ec2-user' // or the user you use to SSH into your EC2 instance
+    EC2_USER = 'ubuntu' // or the user you use to SSH into your EC2 instance
   }
 
   stages {
@@ -21,7 +21,7 @@ pipeline {
         script {
           sshagent(credentials: ['7a8d0b4d-ff87-40a6-93c6-7844d2c7d3f2']) {
             // SSH into EC2 instance and pull the Docker image
-            ssh -o StrictHostKeyChecking=no -vvv ec2-user@ec2-3-87-72-11.compute-1.amazonaws.com docker pull rani2909/myjenkin
+            ssh -o StrictHostKeyChecking=no -vvv ubuntu@ec2-3-87-72-11.compute-1.amazonaws.com docker pull rani2909/myjenkin
           }
         }
       }
